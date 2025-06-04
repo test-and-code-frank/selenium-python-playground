@@ -1,5 +1,5 @@
 settings:
   env:
     # Environments
-    username: admin
-    password: admin
+    username: testuser
+    password: password123

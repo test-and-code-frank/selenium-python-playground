@@ -1,6 +1,8 @@
 import pytest
+
 from pages.local_app import LoginPage, Dashboard, ItemList
 from test_suites.conftest import path
+from test_util.config import TEST_ENV
 
 
 # Test invalid login with multiple incorrect credential combinations
@@ -27,6 +29,7 @@ def test_invalid_login(web_driver, username, password):
     login_page.is_invalid_login_message_visible()
 
 
+@pytest.mark.item_test
 def test_add_edit_delete_item(web_driver):
     # Initialize page objects
     login_page = LoginPage(web_driver)
@@ -37,8 +40,8 @@ def test_add_edit_delete_item(web_driver):
     login_page.go_to_url(f'{path}/../test_site/index.html')
 
     # Perform login with valid credentials
-    login_page.fill_username('testuser')
-    login_page.fill_password('password123')
+    login_page.fill_username(TEST_ENV.username)
+    login_page.fill_password(TEST_ENV.password)
     login_page.click_login_button()
 
     # Verify dashboard is loaded
