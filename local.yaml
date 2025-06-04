@@ -1,0 +1,5 @@
+settings:
+  env:
+    # Environments
+    username: admin
+    password: admin
