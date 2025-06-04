@@ -33,13 +33,41 @@
   </div>
 
   <!-- Form Page -->
-  <div id="form-page" class="hidden">
-    <h3>Form Submission</h3>
-    <input type="text" id="form-input" placeholder="Type something">
-    <button onclick="submitForm()">Submit</button>
-    <p id="form-message"></p>
-    <button onclick="backToDashboard()">Back to Dashboard</button>
-  </div>
+<div id="form-page" class="hidden">
+  <h3>Form Submission</h3>
+
+  <!-- Text Input -->
+  <label for="form-input">Text Input:</label>
+  <input type="text" id="form-input" placeholder="Type something">
+
+  <!-- Dropdown -->
+  <label for="dropdown">Select Option:</label>
+  <select id="dropdown">
+    <option value="">--Select--</option>
+    <option value="Option A">Option A</option>
+    <option value="Option B">Option B</option>
+    <option value="Option C">Option C</option>
+  </select>
+
+  <!-- Date Picker -->
+  <label for="date">Pick a Date:</label>
+  <input type="date" id="date">
+
+  <!-- Radio Buttons -->
+  <p>Choose one:</p>
+  <label><input type="radio" name="choice" value="Yes"> Yes</label>
+  <label><input type="radio" name="choice" value="No"> No</label>
+
+  <!-- Checkbox -->
+  <p>
+    <label><input type="checkbox" id="agree"> I agree to the terms</label>
+  </p>
+
+  <!-- Submit -->
+  <button onclick="submitForm()">Submit</button>
+  <p id="form-message"></p>
+  <button onclick="backToDashboard()">Back to Dashboard</button>
+</div>
 
   <!-- Item List Page -->
   <div id="list-page" class="hidden">
@@ -94,16 +122,27 @@
     }
 
     function submitForm() {
-      const input = document.getElementById("form-input").value;
-      const message = document.getElementById("form-message");
-      if (input.trim() !== "") {
-        message.textContent = "Form submitted: " + input;
-        message.className = "success";
-      } else {
-        message.textContent = "Input cannot be empty.";
-        message.className = "error";
-      }
-    }
+  const input = document.getElementById("form-input").value.trim();
+  const dropdown = document.getElementById("dropdown").value;
+  const date = document.getElementById("date").value;
+  const choice = document.querySelector("input[name='choice']:checked");
+  const agree = document.getElementById("agree").checked;
+  const message = document.getElementById("form-message");
+
+  if (!input || !dropdown || !date || !choice || !agree) {
+    message.textContent = "Please fill all fields and agree to the terms.";
+    message.className = "error";
+    return;
+  }
+
+  message.textContent = `Form submitted successfully!
+  Text: ${input},
+  Option: ${dropdown},
+  Date: ${date},
+  Choice: ${choice.value},
+  Agreed: ${agree}`;
+  message.className = "success";
+}
 
     function addItem() {
   const input = document.getElementById("item-input").value;

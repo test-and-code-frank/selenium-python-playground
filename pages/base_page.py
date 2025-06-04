@@ -8,10 +8,9 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-TIMEOUT = 20
+TIMEOUT = 10
 
 
 class BasePage:
@@ -167,9 +166,6 @@ class BasePage:
     @staticmethod
     def generate_no_whitespace_string(length):
         return "".join([random.choice(string.digits + string.ascii_letters) for _ in range(length)])
-
-    def select(self, element):
-        return Select(element)
 
     def action_chains(self):
         return ActionChains(self.driver)

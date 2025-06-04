@@ -6,16 +6,33 @@ import functools
 import time
 import sys
 import os.path
+from pathlib import Path
 import inspect
+import pandas
 
 # Provide multiple browser support for running tests
 from selenium.webdriver import Chrome, Firefox
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
-DEFAULT_WAIT_TIME = 20
+from test_util.config import TEST_ENV
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+EXCEL_DATA = Path(__file__).parents[1]/'test_data/testdata.xlsx'
+
+
+def get_excel_test_data(sheet_name):
+    """Read excel and get the needed test data"""
+    excel_data_df = pandas.read_excel(EXCEL_DATA, sheet_name=sheet_name)
+    json_list = excel_data_df.to_dict('records')
+    return json_list
+
+
+def pytest_generate_tests(metafunc):
+    """Check if a fixture is requested, then get the data"""
+    if "form_test" in metafunc.fixturenames:
+        metafunc.parametrize("form_test", get_excel_test_data('form_test'))
 
 
 #
@@ -44,7 +61,8 @@ def web_driver(request, create_temp_dir):
     driver = None
     if selected_driver == 'chrome':
         chrome_options = ChromeOptions()
-        # chrome_options.add_argument("--headless=new")
+        if not TEST_ENV.webdriver_visible:
+            chrome_options.add_argument("--headless=new")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--log-level=3")
         chrome_options.add_argument('--ignore-certificate-errors')
@@ -61,7 +79,8 @@ def web_driver(request, create_temp_dir):
         driver.maximize_window()
     elif selected_driver == 'firefox':
         firefox_options = FirefoxOptions()
-        firefox_options.headless = True
+        if not TEST_ENV.webdriver_visible:
+            firefox_options.headless = True
         firefox_options.set_preference("browser.download.folderList", 2)
         firefox_options.set_preference("browser.download.dir", create_temp_dir)
         firefox_options.set_preference("browser.download.manager.showWhenStarting", False)
@@ -72,9 +91,6 @@ def web_driver(request, create_temp_dir):
         firefox_options.add_argument('--ignore-certificate-errors')
         driver = Firefox(options=firefox_options)
         driver.maximize_window()
-
-    # Wait implicitly for elements to be ready before attempting interactions
-    driver.implicitly_wait(DEFAULT_WAIT_TIME)
 
     # Return the driver object at the end of setup
     yield driver

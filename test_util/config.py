@@ -19,6 +19,7 @@ class AppSettings:
         # Environments
         self.username = env_settings['username']
         self.password = env_settings['password']
+        self.webdriver_visible = env_settings['webdriver_visible']
 
 
 TEST_ENV = AppSettings(config_yml=JIRA_YML)
